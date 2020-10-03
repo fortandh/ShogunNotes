@@ -83,6 +83,8 @@ strncpy(buf, str, len);
 memcpy(buf, str, len);
 ```
 
+
+
 # 空字符串无法用%s输出问题
 ## 问题描述
 ```shell
