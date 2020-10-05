@@ -171,3 +171,38 @@ strncat(libname, file_start, name_len);
 // strncat(libname, file_start, name_len);
 strncat(libname, file_start, sizeof(libname)-strlen(libname)-1);
 ```
+
+# memset() 清理对象问题
+## 问题描述
+```
+/home/fortandh/workspace/jdk12/src/hotspot/share/compiler/disassembler.cpp: In constructor ‘decode_env::decode_env(CodeBlob*, outputStream*, CodeStrings, ptrdiff_t)’:
+/home/fortandh/workspace/jdk12/src/hotspot/share/compiler/disassembler.cpp:365:32: error: ‘void* memset(void*, int, size_t)’ clearing an object of non-trivial type ‘class decode_env’; use assignment instead [-Werror=class-memaccess]
+  365 |   memset(this, 0, sizeof(*this)); // Beware, this zeroes bits of fields.
+      |                                ^
+/home/fortandh/workspace/jdk12/src/hotspot/share/compiler/disassembler.cpp:153:7: note: ‘class decode_env’ declared here
+  153 | class decode_env {
+      |       ^~~~~~~~~~
+cc1plus: all warnings being treated as errors
+```
+
+## 原因分析
+出错的代码如下：
+```
+decode_env::decode_env(CodeBlob* code, outputStream* output, CodeStrings c,
+                       ptrdiff_t offset) {
+  memset(this, 0, sizeof(*this)); // Beware, this zeroes bits of fields.
+```
+
+memset中的指针参数要变成静态的
+
+## 解决方案
+```
+decode_env::decode_env(CodeBlob* code, outputStream* output, CodeStrings c,
+                       ptrdiff_t offset) : _nm(NULL),
+                                           _start(NULL),
+                                           _end(NULL),
+                                           _option_buf(),
+                                           _print_raw('\0'),
+                                           _cur_insn(NULL) {
+// memset(this, 0, sizeof(*this)); // Beware, this zeroes bits of fields.
+```
