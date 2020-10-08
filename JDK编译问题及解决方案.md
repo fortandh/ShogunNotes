@@ -380,3 +380,53 @@ memcpy(t ->SheetType, Type, strnlen(Type, sizeof(t->SheetType)-1));
 ```
 
 **Note：后续还有类似问题，将不再列出**
+
+# 函数缺失属性问题
+## 问题描述
+```shell
+/home/fortandh/workspace/jdk12/src/java.desktop/share/native/libfontmanager/harfbuzz/hb-debug.hh:149:1: note: missing primary template attribute ‘format’
+  149 | _hb_debug_msg (const char *what,
+      | ^~~~~~~~~~~~~
+cc1plus: all warnings being treated as errors
+```
+
+## 原因分析
+出错的代码如下：
+```c++
+template <int max_level> static inline void
+_hb_debug_msg (const char *what,
+               const void *obj,
+               const char *func,
+               bool indented,
+               unsigned int level,
+               int level_dir,
+               const char *message,
+               ...) HB_PRINTF_FUNC(7, 8);
+template <int max_level> static inline void
+_hb_debug_msg (const char *what,
+               const void *obj,
+               const char *func,
+```
+
+在该函数的检查规则中，继续添加HB_PRINTF_FUNC(7,8)
+
+## 解决方案
+```c++
+template <int max_level> static inline void
+_hb_debug_msg (const char *what,
+               const void *obj,
+               const char *func,
+               bool indented,
+               unsigned int level,
+               int level_dir,
+               const char *message,
+               ...) HB_PRINTF_FUNC(7, 8);
+// template <int max_level> static inline void
+template <int max_level> static inline void HB_PRINTF_FUNC(7, 8)
+_hb_debug_msg (const char *what,
+               const void *obj,
+               const char *func,
+```
+
+**Notes:后面发现，还有其他未知错误，因此使用官方fix bug 的方式：**
+**[Upgrade HarfBuzz to the latest 2.3.1](http://hg.openjdk.java.net/jdk/jdk/rev/7c11a7cc7c1d)**
