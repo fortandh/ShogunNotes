@@ -353,7 +353,7 @@ cc1: all warnings being treated as errors
 ## 解决方案
 [53797:c1af89d9d44c](http://hg.openjdk.java.net/jdk/jdk/rev/c1af89d9d44c)
 
-# strncpy() 参数使用常数宏的问题
+# strncpy()参数使用常数宏的问题
 ## 问题描述
 ```shell
 In function ‘strncpy’,
@@ -430,3 +430,30 @@ _hb_debug_msg (const char *what,
 
 **Notes:后面发现，还有其他未知错误，因此使用官方fix bug 的方式：**
 **[Upgrade HarfBuzz to the latest 2.3.1](http://hg.openjdk.java.net/jdk/jdk/rev/7c11a7cc7c1d)**
+
+# snprintf()截断字符串问题
+## 问题描述
+```shell
+/home/fortandh/workspace/jdk12/src/jdk.jdwp.agent/share/native/libjdwp/log_messages.c: In function ‘log_message_end’:
+/home/fortandh/workspace/jdk12/src/jdk.jdwp.agent/share/native/libjdwp/log_messages.c:75:24: error: ‘%.3d’ directive output may be truncated writing between 3 and 11 bytes into a region of size between 0 and 80 [-Werror=format-truncation=]
+   75 |                    "%s.%.3d %s", timestamp_prefix,
+      |                        ^~~~
+/home/fortandh/workspace/jdk12/src/jdk.jdwp.agent/share/native/libjdwp/log_messages.c:75:20: note: using the range [-2147483648, 2147483647] for directive argument
+   75 |                    "%s.%.3d %s", timestamp_prefix,
+      |                    ^~~~~~~~~~~~
+In file included from /usr/include/stdio.h:867,
+                 from /home/fortandh/workspace/jdk12/src/jdk.jdwp.agent/share/native/libjdwp/util.h:30,
+                 from /home/fortandh/workspace/jdk12/src/jdk.jdwp.agent/share/native/libjdwp/log_messages.c:26:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:67:10: note: ‘__builtin___snprintf_chk’ output between 6 and 174 bytes into a destination of size 81
+   67 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   68 |        __bos (__s), __fmt, __va_arg_pack ());
+      |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+```
+
+## 原因分析
+[JDWP: Unforseen output truncation in logging](https://bugs.openjdk.java.net/browse/JDK-8214854)
+
+## 解决方案
+[53979:70c7c4db9c9a](http://hg.openjdk.java.net/jdk/jdk/rev/70c7c4db9c9a)
