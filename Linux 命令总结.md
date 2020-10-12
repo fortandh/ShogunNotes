@@ -12,4 +12,3 @@ diff -uNr a b > b.patch
 patch -p1 < b.patch
 patch -RE -p1 < b.patch
 ```
-
