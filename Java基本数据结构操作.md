@@ -1,4 +1,4 @@
-## 线性表ArrayList
+## 线性表 ArrayList
 ```Java
 import java.util.ArrayList;
 
@@ -46,7 +46,7 @@ stack.peek();
 stack.empty();
 ```
 
-## 队列Queue
+## 队列 Queue
 ```Java
 import java.util.Queue;
 import java.util.LinkedList;
@@ -100,7 +100,7 @@ deque.peekFirst();
 deque.peekLast();
 ```
 
-## 集合Set
+## 集合 Set
 必须提供```equals()```和```hashCode()```方法
 ```Java
 import java.util.Set;
@@ -125,7 +125,7 @@ set.size();
 set.isEmpty();
 ```
 
-## 映射Map
+## 映射 Map
 ```Java
 import java.util.Map;
 import java.util.HashMap;
@@ -155,9 +155,10 @@ map.containsValue(itemValue);
 map.get(itemKey);
 ```
 
-## 堆priorityQueue
+## 堆 PriorityQueue
 ```Java
 import java.util.PriorityQueue;
+import java.util.Comparator;
 
 // PriorityQueue声明
 PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
@@ -187,7 +188,7 @@ pq.size();
 pq.isEmpty();
 ```
 
-## 排序sort
+## 排序 sort
 ```Java
 import java.util.Arrays;
 import java.util.Comparator;
