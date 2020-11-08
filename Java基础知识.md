@@ -27,3 +27,33 @@
 * 方法不能修改基本数据类型的参数（即数值型或布尔型）
 * 方法可以改变对象参数的状态
 * 方法不能让一个对象参数引用一个新的对象
+
+# 继承
+## equals()方法的建议
+1. 显式参数命名为otherObject，稍后将它强制转化为一个名叫other的变量
+2. 检测this与ohterObject是否相等：
+```Java
+if(this == otherObject)
+    return true;
+```
+3. 检测otherObject是否为null，如果为null，返回false。这项检测是很有必要的。
+```Java
+if(otherObject == null)
+    return false;
+```
+4. 比较this与otherObject的类。如果equals的语义可以在子类中改变，就使用getClass检测：
+```Java
+if(getClass()!==otherObject.getClass())
+    return false;
+```
+5. 将otherObject强制转化为相应类类型的变量：
+```Java
+ClassName other = (ClassName) otherObject;
+```
+6. 现在根据相等性概念的要求来比较字段。使用==比较基本字段，使用Objects.equals()比较对象字段。如果所有字段都匹配，就返回true；否则就返回false。
+```Java
+return field1==other.field1
+  && Object.equals(field2, other.field2)
+  && ...;
+```
+如果在子类中重新定义equals，就要在其中包含一个super.equals(other)调用。
