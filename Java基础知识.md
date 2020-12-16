@@ -71,3 +71,36 @@ return field1==other.field1
 ```Java
 Person[] people = stream.toArray(Person::new);
 ```
+
+# 泛型程序设计
+## 泛型方法
+```Java
+class ArrayAlg {
+  public static <T> getMiddle(T... a) {
+    return a[a.length / 2];
+  }
+}
+```
+
+## 泛型代码和虚拟机
+* 虚拟机中没有泛型，只有普通的类和方法
+* 所有的类型参数都会替换为它们的限定类型
+* 会合成桥方法来保持多态
+* 为保持类型安全性，必要时会插入强制类型转换
+
+## 限制和局限性
+* 不能用基本类型实例化类型参数
+* 运行时类型查询只适用于原始类型
+* 不能创建参数化的类型数组，要使用```ArrayList:ArrayList<Pair<String>>```收集参数化类型对象
+* 不能实例化类型变量
+* 不能构造泛型数组
+* 泛型类的静态上下文中类型变量无效
+* 不能抛出或捕获泛型类的实例
+* 擦除后的冲突
+```Java
+class Employee implements Comparable<Employee> {...}
+class Manager extends Employee implements Comparable<Manager> {...} // ERROR
+
+class Employee implements Comparable {...}
+class Manager extends Employee implements Comparable {...} // Correct
+```
