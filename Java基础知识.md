@@ -104,3 +104,32 @@ class Manager extends Employee implements Comparable<Manager> {...} // ERROR
 class Employee implements Comparable {...}
 class Manager extends Employee implements Comparable {...} // Correct
 ```
+
+## 通配符类型
+* ```Pair<Manager>```和```Pair<Employee>```没有关系
+* ```Pair<Manager>```是```Pair<? extends Employee>```的子类型，但是只能读取泛型对象
+* ```Pair<Manager>```是```Pair<? super Manager>```的子类型，但是只能写入泛型对象
+
+# 集合
+## 迭代器
+```Java
+it.remove();
+it.remove(); // ERROR
+
+it.remove();
+it.next();
+it.remove(); // OK
+```
+
+## 具体集合
+* Vector类是同步的，ArrayList不是同步的。因此，在不需要同步时用ArrayList，同步时用Vector
+
+## 算法
+```Java
+String[] values = staff.toArray(new String[0]);
+String[] values = staff.toArray(new String[staff.size()]);
+```
+
+## 遗留的集合
+* Hashtable类和HashMap类作用一样
+* Hashtable类的方法也是同步的，如果需要并发，请使用ConcurrentHashMap
