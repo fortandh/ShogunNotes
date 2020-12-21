@@ -133,3 +133,52 @@ String[] values = staff.toArray(new String[staff.size()]);
 ## 遗留的集合
 * Hashtable类和HashMap类作用一样
 * Hashtable类的方法也是同步的，如果需要并发，请使用ConcurrentHashMap
+
+# 并发
+## 什么是线程
+```Java
+Runnable r = ()->{ task code }; // 函数式接口
+var t = new Thread(r);
+t.start();
+```
+
+## 线程状态
+* 一个可运行的线程，既可能在运行，也可能没有运行
+
+## 线程属性
+* interupted()方法是静态方法，检查当前线程是否被中断，**会清除当前线程的中断状态**
+* isInterupted()方法是实例方法，检查是否有线程被中断，**不会改变中断状态**
+
+## 同步
+* 要确保临界区的代码不要因为抛出异常而跳出临界区。如果临界区代码结束之前抛出了异常，finally子句将释放锁，但是对象可能处于被破坏的状态
+* 条件对象
+```Java
+sufficientFunds = bankLock.newCondition();
+
+sufficientFunds.await();
+sufficientFunds.signalAll();
+```
+
+* 锁用来保护代码片段，以此只能有一个线程执行被保护的代码
+* 锁可以管理试图进入被保护代码段的线程
+* 一个锁可以有一个或多个相关联的条件对象
+* 每个条件对象管理那些已经进入被保护代码段但还不能运行的线程
+
+* 最好既不使用Lock/Condition也不使用synchronized关键字。在很多情况下，可以使用```java.util.concurrent```包中的某些机制。
+* 如果synchronized关键字适合你的程序，那么尽量使用这种做法
+* 如果特别需要Lock/Condition结构提供额外的能力，则使用Lock/Condition
+
+* volatile关键字为实例字段的同步访问提供了一个免锁机制，但不提供原子性
+
+```Java
+// 线程局部变量
+public static final ThreadLocal<SimpleDateFormat> dateFormat = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-mm-dd"));
+
+String dataStamp = dateFormat.get().format(new Date());
+```
+
+## 任务和线程池
+* 调用```Executors```类的静态方法```newCachedThreadPool```或```newFixedThreadPool```
+* 调用```submit```提交```Runnable```或```Callable```对象
+* 保存好返回的```Future```对象，以便得到结果或者取消任务
+* 当不想再提交任何任务时，调用```shutdown```
